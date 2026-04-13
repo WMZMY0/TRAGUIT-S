@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<title>TRAGUITÖS</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f7efe5;
+    color: #333;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+}
+
+.logo {
+    width: 120px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.producto {
+    width: 90%;
+    max-width: 350px;
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+select, input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #28a745;
+    color: white;
+    transition: transform 0.2s;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.carrito-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 4px 7px;
+    border-radius: 50%;
+    display: none;
+}
+
+.carrito-panel {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-radius: 20px 20px 0 0;
+    transition: 0.3s;
+}
+
+.carrito-panel.active {
+    bottom: 0;
+}
+
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: 0.4s;
+}
+
+.toast.show {
+    opacity: 1;
+    bottom: 100px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="logo.png" class="logo">
+    <h1>TRAGUITÖS</h1>
+    <p>Refresca Tu Mood</p>
+</header>
+
+<div class="container">
+
+<div class="producto">
+    <h3>Traguitos</h3>
+    <p>$89</p>
+    <select id="sabor1">
+        <option>Mango</option>
+        <option>Fresa</option>
+        <option>Frutos Rojos</option>
+        <option>Maracuyá</option>
+        <option>Pepino-Limón</option>
+        <option>Mora Azul</option>
+        <option>Kiwi</option>
+        <option>Combinados A Tu Elección</option>
+    </select>
+    <input type="number" id="cant1" value="1">
+    <button onclick="agregarConOpciones('Traguitos',89,'sabor1','cant1')">Agregar</button>
+</div>
+
+<div class="producto">
+    <h3>Margaritas</h3>
+    <p>$89</p>
+    <select id="sabor2">
+        <option>Mango</option>
+        <option>Fresa</option>
+        <option>Frutos Rojos</option>
+        <option>Maracuyá</option>
+        <option>Pepino-Limón</option>
+        <option>Mora Azul</option>
+        <option>Kiwi</option>
+        <option>Combinados A Tu Elección</option>
+    </select>
+    <input type="number" id="cant2" value="1">
+    <button onclick="agregarConOpciones('Margaritas',89,'sabor2','cant2')">Agregar</button>
+</div>
+
+<div class="producto">
+    <h3>Azulitos</h3>
+    <p>$89</p>
+    <input type="number" id="cant3" value="1">
+    <button onclick="agregarSimple('Azulitos',89,'cant3')">Agregar</button>
+</div>
+
+<div class="producto">
+    <h3>Rosaditas</h3>
+    <p>$89</p>
+    <input type="number" id="cant4" value="1">
+    <button onclick="agregarSimple('Rosaditas',89,'cant4')">Agregar</button>
+</div>
+
+<div class="producto">
+    <h3>Micheladas</h3>
+    <p>$89</p>
+    <input type="number" id="cant5" value="1">
+    <button onclick="agregarSimple('Micheladas',89,'cant5')">Agregar</button>
+</div>
+
+</div>
+
+<div class="carrito-btn" onclick="toggleCarrito()">
+    🛒 <span id="badge">0</span>
+</div>
+
+<div class="carrito-panel" id="carritoPanel">
+    <h2>Carrito</h2>
+    <div id="carrito"></div>
+    <p>Total: $<span id="total">0</span></p>
+    <button onclick="enviarPedido()">Enviar Por WhatsApp</button>
+</div>
+
+<div id="toast" class="toast">Producto agregado</div>
+
+<script>
+let carrito = [];
+let total = 0;
+
+function mostrarToast() {
+    let toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2000);
+}
+
+function toggleCarrito() {
+    document.getElementById("carritoPanel").classList.toggle("active");
+}
+
+function agregarSimple(nombre, precio, idCantidad) {
+    let cantidad = parseInt(document.getElementById(idCantidad).value);
+    carrito.push({nombre, precio, cantidad});
+    total += precio * cantidad;
+    actualizarCarrito();
+    mostrarToast();
+}
+
+function agregarConOpciones(nombre, precio, idSabor, idCantidad) {
+    let sabor = document.getElementById(idSabor).value;
+    let cantidad = parseInt(document.getElementById(idCantidad).value);
+
+    carrito.push({
+        nombre: nombre + " (" + sabor + ")",
+        precio,
+        cantidad
+    });
+
+    total += precio * cantidad;
+    actualizarCarrito();
+    mostrarToast();
+}
+
+function eliminar(index) {
+    total -= carrito[index].precio * carrito[index].cantidad;
+    carrito.splice(index, 1);
+    actualizarCarrito();
+}
+
+function actualizarCarrito() {
+    let contenedor = document.getElementById("carrito");
+    contenedor.innerHTML = "";
+
+    carrito.forEach((item, index) => {
+        let div = document.createElement("div");
+        div.innerHTML = `
+            ${item.nombre} x${item.cantidad}
+            <button onclick="eliminar(${index})">❌</button>
+        `;
+        contenedor.appendChild(div);
+    });
+
+    document.getElementById("total").textContent = total;
+    actualizarBadge();
+}
+
+function actualizarBadge() {
+    let totalItems = 0;
+    carrito.forEach(item => totalItems += item.cantidad);
+
+    let badge = document.getElementById("badge");
+    badge.textContent = totalItems;
+    badge.style.display = totalItems > 0 ? "block" : "none";
+}
+
+function enviarPedido() {
+    let numero = "5214211103793";
+    let mensaje = "Hola quisiera pedir:\n";
+
+    carrito.forEach(item => {
+        mensaje += "- " + item.nombre + " x" + item.cantidad + "\n";
+    });
+
+    mensaje += "Total: $" + total;
+
+    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje));
+}
+</script>
+
+</body>
+</html>
